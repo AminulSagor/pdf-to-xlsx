@@ -1,3 +1,4 @@
+// src/app/page.tsx
 "use client";
 
 import { useState } from "react";
@@ -35,34 +36,28 @@ export default function HomePage() {
     }
   };
 
-  // Download as real Excel (.xlsx)
+  // Download as real Excel (.xlsx) including Value (Total)
   const downloadXlsx = () => {
     if (!rows.length) return;
 
-    // Flatten to simple objects -> worksheet
     const sheetData = rows.map((r) => ({
-      Source: r.source,
-      Page: r.page,
       Name: r.name ?? "",
       Phone: r.phone ?? "",
       Address: r.address ?? "",
+      Value: (r as any).value ?? "", // value is added by the API
     }));
 
-    // Workbook + sheet
     const wb = XLSX.utils.book_new();
     const ws = XLSX.utils.json_to_sheet(sheetData);
 
-    // Optional: nicer column widths
     ws["!cols"] = [
-      { wch: 24 }, // Source
-      { wch: 6 },  // Page
       { wch: 28 }, // Name
       { wch: 16 }, // Phone
       { wch: 60 }, // Address
+      { wch: 12 }, // Value
     ];
 
     XLSX.utils.book_append_sheet(wb, ws, "Extracted");
-    // ISO-ish filename safe for all OS
     const fname = `extracted_${new Date().toISOString().replace(/[:.]/g, "-")}.xlsx`;
     XLSX.writeFile(wb, fname, { compression: true });
   };
@@ -112,7 +107,7 @@ export default function HomePage() {
               onClick={downloadXlsx}
               disabled={!rows.length || busy}
               className="inline-flex items-center justify-center rounded-md bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition
-                         hover:bg-emerald-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600
+                         hover:bg-emerald-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600
                          disabled:cursor-not-allowed disabled:opacity-50"
             >
               Download XLSX
@@ -141,11 +136,10 @@ export default function HomePage() {
               <table className="min-w-full text-sm">
                 <thead className="sticky top-0 bg-slate-100/95 backdrop-blur supports-[backdrop-filter]:bg-slate-100/70">
                   <tr className="text-left text-slate-700">
-                    <th className="p-3 font-semibold">Source</th>
-                    <th className="p-3 font-semibold">Page</th>
                     <th className="p-3 font-semibold">Name</th>
                     <th className="p-3 font-semibold">Phone</th>
                     <th className="p-3 font-semibold">Address</th>
+                    <th className="p-3 font-semibold">Value</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -154,11 +148,10 @@ export default function HomePage() {
                       key={i}
                       className="border-t border-slate-200 odd:bg-white even:bg-slate-50 hover:bg-indigo-50/60"
                     >
-                      <td className="p-3 text-slate-900">{r.source}</td>
-                      <td className="p-3 text-slate-900">{r.page}</td>
                       <td className="p-3 text-slate-900">{r.name ?? ""}</td>
                       <td className="p-3 text-slate-900">{r.phone ?? ""}</td>
                       <td className="p-3 text-slate-900 w-[520px]">{r.address ?? ""}</td>
+                      <td className="p-3 text-slate-900">{(r as any).value ?? ""}</td>
                     </tr>
                   ))}
                 </tbody>
