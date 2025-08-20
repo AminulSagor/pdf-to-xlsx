@@ -113,7 +113,7 @@ export default function HomePage() {
               Download XLSX
             </button>
 
-            <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-medium text-amber-800 ring-1 ring-inset ring-amber-200">
+            <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-medium text-yellow-800 ring-1 ring-inset ring-amber-200">
               {files.length} file(s) • {rows.length} row(s)
             </span>
           </div>
